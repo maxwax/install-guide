@@ -75,8 +75,14 @@ Make git and rpm of GNOME shortcut files
 
 ##### Gnome Shell Extensions
 
-* panel-world-clock
-* gnome-shell-theme-elegance-colors
+  * Panel World Clock
+  * Always Launch New Instance
+  * Media Player Indicator
+  * Recent Items
+  * User Themes
+  * Workspace Indicator
+
+  * gnome-shell-theme-elegance-colors
 
 ##### Control Panel Changes
 
