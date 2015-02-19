@@ -4,4 +4,4 @@ The install guide a runlist of actions that are taken to convert a generic insta
 
 This is offered publicly so others can see what I use and how I use it.
 
-http://www.maxwellspangler.com/linux/install
+http://www.maxwellspangler.com/install
