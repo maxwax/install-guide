@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>maxwellspangler.com - Fedora 20 Install Guide</title>
+	<link rel="shortcut icon" href="http://www.maxwellspangler.com/favicon.ico" />
+<!--
+	<link rel=stylesheet href="file:/home/maxwell/projects/www.maxwellspangler.com/css/maxwellspangler.css" type="text/css">
+-->
+  <link rel=stylesheet href="../css/maxwellspangler.css" type="text/css">
+  <link rel=stylesheet href="../css/install-guide.css" type="text/css">
+	<!-- Google html5 shiv for IE < 8 http://ejohn.org/blog/html5-shiv/ -->
+	<!--[if lte IE 8]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<!-- PAGE HEADER -->
+	<header>
+		<div class="maxwellspangler">
+			<a href=/>maxwellspangler.com</a>
+      <a href=/>Home</a>
+      >   
+      <a href=/install/>Install Guides</a>
+      > Fedora 20 Install Guide
+		</div>
+	</header>
+
+	<div class="install_main">
+
+		<h1><a id="Top">Fedora 20 Install Guide</a></h1>
+
+		<p>January 13, 2014 by <a href=/>Maxwell Spangler</a></p>
+
+		<p>This is my personal guide for transforming a fresh install of Fedora 20 Linux into a customized workstation environment tailored specifically for <em>my</em> needs.</p>
+
+		<ul class="list_install_basic">
+			<li>This guide provides me with a list of past customizations so I can implement them now, <em>before I need to use them</em>.
+
+			<li>It directs me to the methods I've used in the past so I can implement them quickly without research.
+			<li>It acts as a reference for how to make ad-hoc changes on additional systems
+		</ul>
+
+		<p>The procedures listed in this guide could be scripted, but due to the constantly-changing nature of new Fedora releases, I'd spend more time updating the script than it's worth.  So I update this guide and do my work by hand, for now.</p>
+		
+		<a href="#section_backup"><strong>First, Backup!</strong></a>
+		<ol start=0>
+			<li><a href="#item_backup">Backup Important Files</a>
+		</ol>
+
+		<a href="#section_overview"><strong>Install Base Linux Environment</strong></a>
+		<ol start=1>
+			<li><a href="#item_install">Install Fedora 20 Linux</a>
+			<li><a href="#item_bashrc">Customize /etc/bashrc</a>
+			<li><a href="#item_vimrc">Customize $HOME/.vimrc</a>
+			<li><a href="#item_networking">Configure Basic Networking</a>
+		</ol>
+
+		<a href="#section_restorehome"><strong>Restore /home Filesystem</strong></a>
+		<ol start=5>
+			<li><a href="#item_restorehome">Restore the separate /home filesystem</a>
+		</ol>
+
+		<a href="#section_proxies"><strong>Proxies (Corporate environment)</strong></a>
+		<ol start=6>
+			<li><a href="#item_firefoxproxy">Configure Firefox Proxy</a>
+			<li><a href="#item_bashproxy">Configure Bash Proxy</a>
+			<li><a href="#item_systemproxy">Configure GNOME Proxy</a>
+			<li><a href="#item_yumproxy">Configure Yum Proxy in /etc/yum.conf</a>
+		</ol>
+
+		<a href="#section_repos"><strong>RPMFusion Repositories and Update Packages</strong></a>
+		<ol start=10>
+			<li><a href="#item_fastestmirror">Install yum-plugin-fastestmirror</a>
+			<li><a href="#item_rpmfusion">Install rpmfusion repo</a>
+			<li><a href="#item_yumupdate">Update base OS install with current packages</a>
+		</ol>
+
+		<a href="#section_packages"><strong>Additional Packages</strong></a>
+		<ol start=13>
+			<li><a href="#item_packages">Install required packages using 'fedora-desktop-packages' script</a>
+		</ol>
+
+		<a href="#section_third"><strong>Third Party Applications</strong></a>
+		<ol start=14>
+			<li><a href="#item_virtualbox">Install Oracle VirtualBox</a>
+			<li><a href="#item_flash">Install Adobe x86_64 repo and Flash Player</a>
+			<li><a href="#item_google">Install Google Applications</a>
+		</ol>
+
+		<a href="#section_sysenv"><strong>System Security Settings</strong></a>
+		<ol start=17>
+			<li><a href="#item_selinux">Review SELinux setting: Enforcing or Permissive?</a>
+			<li><a href="#item_firewall">Configure Firewall</a>
+		</ol>
+
+		<a href="#section_fonts"><strong>Fonts</strong></a>
+		<ol start=19>
+			<li><a href="#item_fonts">Install custom fonts</a>
+			<li><a href="#item_msfonts">Install Microsoft fonts</a>
+			<li><a href="#item_setfoxfonts">Set default fonts in Firefox</a>
+		</ol>
+
+		<a href="#section_specials"><strong>Special installs</strong></a>
+		<ol start=25>
+			<li><a href="#item_acrobat">Install Adobe Acrobat Reader</a>
+			<li><a href="#item_java">Install Oracle Java 7 Runtime</a>
+			<li><a href="#item_nvidia">Install Nvidia Proprietary Graphics Drivers</a>
+			<li><a href="#item_solarizedgt">Install Solarized Color Palette for Gnome Terminal</a>
+			<li><a href="#item_solarizedvim">Install Solarized Color Palette for Vim</a>
+			<li><a href="#item_bashprompt">Install a custom bash prompt</a>
+		</ol>
+
+		<a href="#section_cfg_apps"><strong>Configure Applications</strong></a>
+		<ol start=31>
+			<li><a href="#item_cfg_foxplugins">Configure Firefox Plugins</a>
+			<li><a href="#item_cfg_conserver">Configure conserver client (corporate)</a>
+			<li><a href="#item_cfg_pidgin">Configure pidgin chat client (corporate)</a>
+			<li><a href="#item_cfg_openvpn">Configure OpenVPN client (corporate)</a>
+			<li><a href="#item_cfg_samba">Configure Samba</a>
+			<li><a href="#item_cfg_samba">Configure SELinux for Samba</a>
+			<li><a href="#item_cfg_virtualbox">Configure VirtualBox</a>
+		</ol>
+
+		<a href="#section_fixes"><strong>Configure Fixes</strong></a>
+		<ol start=38>
+			<li><a href="#item_fixes">Disable Nemo's Handling of Desktop Background</a>
+		</ol>
+
+		<a href="#section_gnomeenv"><strong>GNOME Environmental Settings</strong></a>
+		<ol start=39>
+			<li><a href="#section_gnomeenv">Set the desktop background</a>
+			<li><a href="#section_gnomeenv">Configure Google and Facebook Accounts</a>
+			<li><a href="#section_gnomeenv">Disable Screen Lock</a>
+			<li><a href="#section_gnomeenv">Adjust File Usage & History Tracking</a>
+			<li><a href="#section_gnomeenv">Adjust Trash & Temporary File Handling</a>
+			<li><a href="#section_gnomeenv">Set the "Menu" key to Lower Windows</a>
+			<li><a href="#section_gnomeenv">Configure Wired/Wireless Network Settings</a>
+			<li><a href="#section_gnomeenv">Set "Dim Screen when inactive"</a>
+			<li><a href="#section_gnomeenv">Set "Black Screen" delay</a>
+			<li><a href="#section_gnomeenv">Set "Automatic Suspend" to off</a>
+			<li><a href="#section_gnomeenv">Set "Battery Power Critical" Handling</a>
+			<li><a href="#section_gnomeenv">Configure Printers</a>
+			<li><a href="#section_gnomeenv">Set Date/Time to use NTP</a>
+			<li><a href="#section_gnomeenv">Set Time Zone to use NTP</a>
+			<li><a href="#section_gnomeenv">Set Time Format to 24-hour</a>
+			<li><a href="#section_gnomeenv">Set Default Applications</a>
+			<li><a href="#section_gnomeenv">Configure Handling of Removable Media</a>
+			<li><a href="#section_gnomeenv">Verify that Screen Sharing and Media Sharing are Off</a>
+			<li><a href="#section_gnomeenv">Verify that Remote Login is On</a>
+			<li><a href="#section_gnomeenv">Configure Primary User with Real Photo</a>
+			<li><a href="#section_gnomeenv">Create a Guest User</a>
+		</ol>
+
+		<a href="#section_tweak"><strong>Advanced Environment Settings</strong></a>
+		<ol start=60>
+			<li><a href="#section_tweak">Configure Fonts to Lucida</a>
+			<li><a href="#section_tweak">Show Date on Top Bar</a>
+			<li><a href="#section_tweak">Set Focus Mode to Mouse</a>
+			<li><a href="#section_tweak">Set Titlebar Double-Click to Maximize Vertically</a>
+			<li><a href="#section_tweak">Set Workspace Creation to Static</a>
+			<li><a href="#section_tweak">Set Number of Workspaces to 6</a>
+			<li><a href="#section_tweak">Set Workspaces only on Primary Display</a>
+		</ol>
+
+		<a href="#section_extensions"><strong>GNOME Shell Extensions</strong></a>
+		<ol start=67>
+			<li><a href="#item_alwayslaunch">Install "Launch New Instance"</a>
+			<li><a href="#item_weather">Install "Weather (by Neroth)"</a>
+			<li><a href="#item_recent">Install "Recent Items"</a>
+			<li><a href="#item_music">Install "Music Integration"</a>
+			<li><a href="#item_mixer">Install "Advanced Volume Mixer"</a>
+			<li><a href="#item_integration">Install "Music Integration"</a>
+			<li><a href="#item_monitor">Install "Monitor Status Indicator"</a>
+			<li><a href="#item_workspace">Install "Workspace Indicator"</a>
+			<li><a href="#item_screencast">Install "Easy Screen Cast"</a>
+		</ol>
+
+		<a href="#section_launchers"><strong>Restore Custom Launchers</strong></a>
+		<ol start=76>
+			<li><a href="#item_codinglaunch">Restore Custom Launchers</a>
+		</ol>
+
+		<a href="#section_restore"><strong>Restore Data</strong></a>
+		<ol start=77>
+			<li><a href="#item_data">Restore User Files</a>
+		</ol>
+
+		<p>At this point, reboot the system and verify that everything comes up clean and works correctly.  <em>Share and Enjoy!</em> </p>
+
+		<!-- ***** INITIAL INSTALL ***** -->
+
+		<h2><strong><a id="section_backup">First, Backup!</a></strong></h2>
+
+		<h3><strong><a id="item_backup">Backup Important Files</a></strong><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>I usually make 2-3 copies of my data prior to a major system upgrade.  There is always a chance I'll accidentally erase everything on my system, so I like having several copies on a separate file server for safety.</p>
+
+		<p>Custom scripts backup most of this for me:</p>
+		<ul class="list_install_basic">
+			<li><strong>/home</strong> - Individual user files (important!)
+			<li><strong>/etc</strong> - System configuration files (for restoration and reference)
+			<li><strong>/root</strong> - Root's home directory (for reference)
+			<li><strong>/var/lib/libvirt</strong> - KVM Virtual Machines (for VMs)
+			<li><strong>/usr/share/fonts</strong> - Fonts I may have added (for restoration)
+			<li><strong>/var/log</strong> - log files (for reference)
+		</ul>
+
+		<p>By hand, <strong>have Evolution produce a backup .tgz file</strong> of it's mail and configuration data.</p>
+
+		<!-- ***** INITIAL INSTALL ***** -->
+
+		<h2><strong><a id="section_overview">Base Linux Environment</a></strong></h2>
+
+		<h3><strong><a id="item_install">Install Fedora 20 Linux</a></strong><a href=#top class="install_boxtop">Top</a></h3>
+		<p>Some basic notes on how I perform my installs:</p>
+		<div class="install_list">
+			<ol>
+				<li><strong>Boot the install media</strong> and begin the boot process.</br>If you're installing from DVD media, use the ESC key to skip the slow media verification process.
+			</ol>
+			<ol start=2>
+				Fedora Installer Screen "WELCOME TO FEDORA 20" 
+				<li><strong>Choose Your Language</strong>.  I use "English/English + English (United States)" then click "Continue"
+			</ol>
+			<ol start=3>
+				Fedora Installer Screen "INSTALLATION SUMMARY"
+				<li><strong>Set your timezone</strong>. Click on Localization -> Date & Time to set ("Americas/Denver timezone")
+				<li><strong>Set your keyboard</strong>. Click on Localization -> Keyboard to set. ("English")
+				<li><strong>Set your language</strong>. Click on Localization -> language to set. ("English (United States)")
+
+				<li><strong>Review Installation Source</strong>. It should be set properly already.
+				<li><strong>Review Software Selection</strong>. It should be set to Gnome Desktop by default.
+
+				<li><strong>Review Network Configuration</strong>. It should be configured properly already.
+				<li><strong>Configure install storage</strong>. Click on System -> Installation Destination (or use the defaults.)
+			</ol>
+			<ol start=9>
+				Fedora Installer Screen "INSTALLATION DESTINATION"
+
+				<li><strong>Ensure your primary boot drive is selected with a check</strong>.
+				<li><strong>Click "Done" to continue</strong>.
+
+			</ol>
+			<ol start=11>
+				Fedora Installer Screen "INSTALLATION OPTIONS"
+
+			<!-- Installation Options Pop-Up -->
+				<li><strong>Set "Partition Scheme" to LVM</strong>.  This is the default
+				<li><strong>Check "Encrypt my data. I'll set a passphrase later."</strong> This encrypts filesystems for safety
+				<li><strong>Click "Continue" or "Custom Partitioning"</strong> - Which button is present depends on whether your disk has existing partitions in place.  You may be asked to provide your storage encryption password immediately after this point.
+
+			<table class=install_simple_table> 
+				<caption>Physical partitioning</caption>
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Description</th>
+						<th>Mount Point</th>
+						<th>Type</th>
+						<th>Size</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1</td>
+						<td>Kernels and initrd images for booting</td>
+						<td>/boot</td>
+						<td>ext4</td>
+						<td>500 MB</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>All remaining space</td>
+						<td>(n/a)</td>
+						<td>LVM2 Physical Volume</td>
+						<td>All</td>
+					</tr>
+				</tbody>
+			</table>
+
+			</p>
+
+			<table class=install_simple_table> 
+				<caption>Volume Group filesystems:</caption>
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Description</th>
+						<th>Mount point<//th>
+						<th>Logical Volume Name<//th>
+						<th>Filesystem Label<//th>
+						<th>Type</th>
+						<th>Size</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1</td>
+						<td>Operating System</td>
+						<td>/</td>
+						<td>lv_root</td>
+						<td>root</td>
+						<td>ext4</td>
+						<td>32 GB</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>Log files and KVM VMs</td>
+						<td>/var</td>
+						<td>lv_var</td>
+						<td>var</td>
+						<td>ext4</td>
+						<td>4 - 128GB </td>
+					</tr>
+					<tr>
+						<td>3</td>
+						<td>User files</td>
+						<td>/home</td>
+						<td>lv_home</td>
+						<td>home</td>
+						<td>ext4</td>
+						<td>Remaining</td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>Swap support</td>
+						<td>swap</td>
+						<td>lv_swap</td>
+						<td>(n/a)</td>
+						<td>swap</td>
+						<td>1x - 2x memory</td>
+					</tr>
+					<tr>
+						<td>5</td>
+						<td>Unallocated LVM space for snapshots</td>
+						<td>Unallocated</td>
+						<td>n/a</td>
+						<td>n/a</td>
+						<td>n/a</td>
+						<td>5%</td>
+					</tr>
+				</tbody>
+			</table>
+			<p>These tables act as a guide for what I normally configure on my systems.  I adjust partition sizes based on the available storage and the desired functionality of the system.</p>
+
+			<p>There are a variety of ways to partition a Fedora system:</p>
+
+			<ul>
+				<li>Let the Fedora partitioner choose partitions and sizes for you<br> - This is easiest
+				<li>Let the Fedora partitioner choose partitions and sizes for you <em>then edit the sizes</em> <br> - This is easy but lets you control sizing
+				<li>Remove all partitions and make new ones by hand<br> - This is clean, simple and gives you total control
+				<li>Re-use existing partitions by re-formatting and re-sizing some while re-using others with data intact<br> - This is more complicated but good for quick re-installation of the OS without losing data in /home
+			</ul>
+
+			<p>Depending on the circumstances, I do either of the last two when I'm working with a system I care about.  Below is a rough guide to what I do so my system has partitions based on the tables above</p>
+
+			</ol>
+			<ol start=14>
+				<p>Fedora Installer Screen "MANUAL PARTITIONING"</p>
+
+				<p>Add partitions using the "+" button</p>
+				<li><strong>Add a /boot partition</strong> with the mount point "/boot" and name "boot"<br> - This will be a standard partition not contained within the LVM system
+				<li><strong>Add a / (root) partition</strong> with the mount point "/"<br> - Creating your first partition initializes the LVM system and makes this the first logical volume.<br> - Select this filesystem and in the next step, modify it.
+				<li><strong>Change the Volume Group name to "vg_<system_name>" such as "vg_mylaptop"</strong><br> - This is the traditional naming convention of Fedora/Red Hat from past releases.<br> - Set the root filesystem Name to "lv_root" and it's Label to "root"
+				<li><strong>Add a /var partition</strong> with the mount point "/var"<br> - Set the /var filesystem Name to "lv_var" and it's Label to "var"
+				<li><strong>Add a swap partition</strong> with the mount point "swap"<br> - Set the swap filesystem Name to "lv_swap".  It will not have a filesystem label.
+				<li><strong>Add a /home partition</strong> with the mount point "/home"<br> - Set the /home filesystem Name to "lv_home" and it's Label to "home"
+
+				<li><strong>Review all partitions</strong> to make sure all except /boot are part of the same volume group and are checked for encryption.
+
+				<li><strong>Click on "Done"</strong> to continue
+
+			</ol>
+			<ol start=22>
+				Fedora Installer Screen "SUMMARY OF CHANGES"
+
+				<li><strong>Review the changes that will be made</strong> - make sure no existing partitions you wish to keep will be deleted.
+				<li><strong>Click "Accept Changes"</strong> if you are satisfied with your partitioning
+
+			</ol>
+			<ol start=22>
+				Fedora Installer Screen "DISK ENCRYPTION PASSPHRASE"
+
+				<li><strong>Set a passphrase for disk encryption</strong>
+				<li><strong>Click "Save Passphrase"</strong> to continue
+
+			</ol>
+			<ol start=24>
+				Fedora Installer Screen "INSTALLATION SUMMARY"
+
+				<li><strong>Click on "Begin Installation"</strong>
+
+			</ol>
+			<ol start=25>
+				Fedora Installer Screen "CONFIGURATION - USER SETTINGS"
+
+				<li>While files are copied, <strong>set a root password</strong> by clicking "Root Password"
+				<li>While files are copied, <strong>create a user account</strong> by clicking "User Creation"
+				<li><strong>Make your user an Administrator</strong> by checking "Make this user administrator"
+
+			</ol>
+			<ol start=28>
+				Fedora Installer Screen "CONFIGURATION - USER SETTINGS"
+				<li><strong>Allow the install process to complete</strong>
+				<li><strong>Reboot into the installed system</strong>.
+
+			</ol>
+			<ol start=28>
+				Fedora Screen - First Boot - Gnome Desktop
+				<li><strong>Confirm your language and keyboard</strong>. Just click "Next"
+				<li><strong>Configure Wireless Networks</strong> or skip if you're wired.
+				<li><strong>Configure Cloud Accounts</strong> like Google and Facebook
+				<li><strong>You're done with the install!</strong>
+			</ol>
+		</div>
+
+		<!-- ***** INITIAL BASHRC ***** -->
+
+		<h3><a id="item_bashrc">Configure system-wide /etc/bashrc</a><a href=#top class=install_boxtop>Top</a></h3>
+
+		<p>The following additions to /etc/bashrc configure a more comfortable command line environment for all users.</p>
+
+<pre class="install_programlisting">
+# Bash: use vi editing
+set -o vi
+
+# aliases from my Unix days
+alias l="ls -l"
+alias lf="ls -CF"
+
+# uncomment this after vim-enhanced is installed
+#alias vi="vim"
+</pre>
+
+		<p><a href=/install/files/bashrc>Maxwell's .bashrc</a></p>
+
+
+		<!-- ***** INITIAL VIMRC ***** -->
+
+		<h3><a id="item_vimrc">Install $HOME/.vimrc config file for VIM editor</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>These settings configure the vim editor to be more comfortable for my tastes.</p>
+
+		<p>
+<pre class="install_programlisting">
+# set tab space at 2 characters
+set tabstop=2
+
+# Allows indent/unindent based on this many characters
+set shiftwidth=2
+
+# enable line numbering
+set number
+
+syntax on
+</pre>
+
+		<p><a href=/install/files/vimrc>Maxwell's .vimrc</a> (short now but expected to grow in the future)</p>
+
+		<!-- ***** CONFIGURE NETWORKING ***** -->
+
+		<h3><a id="item_networking">Configure Basic Networking</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>For wired: Verify via Network Manager that a DHCP connection is established.</p>
+
+		<p>For wireless: Use Network Manager to select a wireless access point and provide WPA keys.</p>
+
+		<p>Both: Verify you can use Firefox to access any well known website.</p>
+
+		<p><strong>If you have more than one network device, disable all except the primary interface leaving one working internet connection.</strong></p>
+
+		<!-- ***** CUSTOM LAUNCHERS ***** -->
+
+		<h2><a id="section_launchers">Restore Custom Launchers</a></h2>
+
+		<h3><a id="item_codinglaunch">Restore Custom Launchers</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>Custom Gnome .desktop files allow me to launch programs in a customized fashion using standard Gnome methods.</p>
+
+		<p>For example, typing 'coding' in the Gnome overview launches a Gnome Terminal with a custom 84x90 character geometry that is well suited for editing source code files in vim with vim line-numbering enabled.</p>
+
+		<p>Right click on <strong><a href=files/coding.desktop>coding.desktop</a></strong> and save it into /usr/share/applications.</p>
+
+		<!-- ***** RESTORE /HOME FILESYSTEM ***** -->
+
+		<h2><a id="section_restorehome">Restore /home Filesystem</a></h2>
+
+		<h3><a id="item_restorehome">Restore the Separate /home Filesystem</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p><em>These are very technical details for one of my complicated systems, you may wish to skip over reading them.</em></p>
+
+		<p>When I use this guide to upgrade, I preserve the existing /home filesystem instead of re-formatting it.</p>
+
+		<p><strong>For most users, this just means making an entry in /etc/fstab to mount a separate /home filesystem on the empty /home created during installation.</strong></p>
+
+		<p>On my primary workstation things are much more complicated.  The following layers must work together to make my /home data available.</p>
+
+		<table class=install_simple_table> 
+			<caption>Storage Layering for /home </caption>
+			<thead>
+				<tr>
+					<th>Layer</th>
+					<th>Description</th>
+					<th>Details</th>
+					<th>Configuration</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Ext4</td>
+					<td>Linux Filesystem</td>
+					<td>/home</td>
+					<td><strong>Configured to mount by /etc/fstab</strong></td>
+				</tr>
+				<tr>
+					<td>LVM2 (lv)</td>
+					<td>LVM Logical Volume</td>
+					<td>lv_elite_home</td>
+					<td>Presented by LVM</td>
+				</tr>
+				<tr>
+					<td>LVM2 (vg)</td>
+					<td>LVM Volume Group</td>
+					<td>vg_elite_home</td>
+					<td>Presented by LVM</td>
+				</tr>
+				<tr>
+					<td>LVM2 (pv)</td>
+					<td>LVM Physical Volume</td>
+					<td>/dev/mapper/open_lvm_elite_home</td>
+					<td>Presented by LVM</td>
+				</tr>
+				<tr>
+					<td>LUKS</td>
+					<td>Software Encryption</td>
+					<td>/dev/mapper/open_lvm_elite_home</td>
+					<td><strong>Unlocked in /etc/crypttab</strong></td>
+				</tr>
+				<tr>
+					<td>mdadm</td>
+					<td>Software RAID 0 - Stripe for Speed</td>
+					<td>/dev/md0</td>
+					<td>Presented by md driver</td>
+				</tr>
+				<tr>
+					<td>Physical</td>
+					<td>SATA disks</td>
+					<td>2 x 1 TB (sdb & sdc)</td>
+					<td>Presented by kernel</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<p>The following commands work from the bottom up to test and configure the layers for use:</p>
+
+		<p>Verify that Linux sees the drives (physical), recognizes them as a raid array (mdadm) and is presenting them:</p>
+
+<pre class="install_programlisting">
+# root@elite [~] # cat /proc/mdstat
+Personalities : [raid0] 
+md0 : active raid0 sdb1[0] sdc1[1]
+      1953520640 blocks super 1.2 512k chunks
+      
+unused devices: <none>
+</pre>
+
+		<p>Verify that the RAID contains an encrypted filesystem and note its UUID:</p>
+
+<pre class="install_programlisting">
+root@elite [~] # blkid | grep md0
+/dev/md0: UUID="931b4709-bc06-4c92-8ed4-1f4901256585" TYPE="crypto_LUKS" 
+</pre>
+
+		<p>Configure /etc/crypttab to unlock and map this encrypted device during the boot process.  I compare my backed-up copy of /etc/crypttab to the one that's running and <em>add</em> the missing line referencing open_lvm_elite_home.</p>
+
+<pre class="install_programlisting">
+# Configured by Fedora installer: Fedora Swap
+luks-400fff3f-6024-4318-919c-c5ad707bd182 UUID=400fff3f-6024-4318-919c-c5ad707bd182 none 
+
+# Configured by Fedora installer: Fedora LVM for root filesystem.
+luks-b5052c1c-a627-4388-87b7-d294ace6f79f UUID=b5052c1c-a627-4388-87b7-d294ace6f79f none 
+
+# Add this line for the encrypted home storage:
+open_lvm_elite_home UUID=931b4709-bc06-4c92-8ed4-1f4901256585 none
+</pre>
+
+		<p>While booting this device will be unlocked by LUKS and mapped to /dev/mapper/open_lvm_elite_home for other layers to use.</p>
+
+		<p>The LVM system should identify it as a physical volume with a volume group and logical volumes on it.</p>
+
+		<p>Here's the physical volume:</p>
+<pre class="install_programlisting">
+root@elite [~] # pvdisplay /dev/mapper/open_lvm_elite_home 
+  --- Physical volume ---
+  PV Name               /dev/mapper/open_lvm_elite_home
+  VG Name               vg_elite_home
+  PV Size               1.82 TiB / not usable 0   
+  Allocatable           yes 
+  PE Size               4.00 MiB
+  Total PE              476933
+  Free PE               162565
+  Allocated PE          314368
+  PV UUID               ErDNQj-gfM1-Dpzc-DeUu-Lxby-This-e5abGo
+</pre>
+
+		<p>Here's the volume group:</p>
+<pre class="install_programlisting">
+root@elite [~] # vgdisplay vg_elite_home
+  --- Volume group ---
+  VG Name               vg_elite_home
+  System ID             
+  Format                lvm2
+  Metadata Areas        1
+  Metadata Sequence No  3
+  VG Access             read/write
+  VG Status             resizable
+  MAX LV                0
+  Cur LV                2
+  Open LV               2
+  Max PV                0
+  Cur PV                1
+  Act PV                1
+  VG Size               1.82 TiB
+  PE Size               4.00 MiB
+  Total PE              476933
+  Alloc PE / Size       314368 / 1.20 TiB
+  Free  PE / Size       162565 / 635.02 GiB
+  VG UUID               42z1i3-9HfE-bYL8-1A6R-yq0V-ehqm-UvxmJ5
+</pre>
+
+		<p>And the the logical volume:</p>
+<pre class="install_programlisting">
+root@elite [~] # lvdisplay /dev/vg_elite_home/lv_elite_home
+  --- Logical volume ---
+  LV Path                /dev/vg_elite_home/lv_elite_home
+  LV Name                lv_elite_home
+  VG Name                vg_elite_home
+  LV UUID                3vmu2c-MAln-rfWO-tLR9-hjEH-swo5-sh0ejb
+  LV Write Access        read/write
+  LV Creation host, time localhost.localdomain, 2013-08-22 16:08:11 -0600
+  LV Status              available
+  # open                 1
+  LV Size                1.07 TiB
+  Current LE             281600
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     4096
+  Block device           253:6
+</pre>
+
+		<p>You should now be able to simply add an entry to /etc/fstab to have your /home filesystem mounted at boot time.</p>
+
+<pre class="install_programlisting">
+/dev/mapper/vg_elite_home-lv_elite_home	/home	ext4	defaults,x-systemd.device-timeout=0 1 2
+</pre>
+
+		<p>Reboot and ensure that your /home directory is the separate filesystem and not a freshly installed /home directory on the root filesystem.</p>
+	
+<pre class="install_programlisting">
+root@elite [~] # mount | grep home
+/dev/mapper/vg_elite_home-lv_elite_home on /home type ext4 (rw,relatime,seclabel,stripe=256,data=ordered)
+</pre>
+
+		<p>If there are problems, start with the lowest layer and debug upwards to find the problem.</p>
+		
+		<!-- ***** INITIAL PROXIES ***** -->
+
+		<h2><a id="section_proxies">Proxies</a></h2>
+
+		<p>Several steps are required to enable internet access when Fedora is used in an environment requiring proxy servers.</p>
+
+		<p><em>Optional - Proxy environments only!</em></p>
+
+		<h3><a id="item_firefoxproxy">Configure Firefox Proxy</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>Within Firefox, set http and https proxies to the local proxy that serves your traffic. Specify any local domains which should not be handled by the proxy.</p>
+
+B
+<pre class="install_programlisting">
+Manual proxy configuration: my-proxy-server.network  Port: 8080
+SSL Proxy: my-proxy-server.network                   Port: 8080
+FTP Proxy: (blank)                                   Port: 0
+SOCKS host: (blank)                                  Port: 0
+
+No proxy for: localhost, 127.0.0.1, .mynetwork, .labnetwork
+</pre>
+
+
+		<h3><a id="item_bashproxy">Configure Bash Proxy</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p class="para">Append these lines to /etc/bashrc when in a corporate environment requiring a proxy server.  Some command line applications will observe these environment variables and use their proxy.</p>
+
+<pre class="install_programlisting">
+# proxy variables for command line programs.
+export http_proxy=proxy-server-id.company.com:8080
+export https_proxy=$http_proxy
+export no_proxy=localhost,.subnet1,.subnet2,10.0.0.0/8
+unset ftp_proxy
+</pre>
+
+		<p>Of course, make sure you modify them to the proxy server and subnets of your own environment!</p>
+
+		<!-- ***** SYSTEM PROXY ***** -->
+
+		<h3><a id="item_systemproxy">Configure GNOME System Proxy</a><a href=#top class="install_boxtop">Top</a> </h3>
+
+		<p>Navigate to the GNOME Network control panel applet and configure proxies for http and https traffic.  Specify any local domains which should not be handled by the proxy.</p>
+
+<pre class="install_programlisting">
+Method: Manual
+HTTP Proxy:  my-proxy-server.network  Port: 8080
+HTTPS Proxy: my-proxy-server.network  Port: 8080
+FTP Proxy:  (blank)                   Port: 0
+Socks host: (blank)                   Port: 0
+
+No proxy for: localhost, 127.0.0.1, .mynetwork, .labnetwork
+</pre>
+
+
+		<h3><a id="item_yumproxy">Configure yum proxy in /etc/yum.conf</a><a href=#top class="install_boxtop">Top</a> </h3>
+
+		<p>Insert the following line into the [main] section in /etc/yum.conf.</p>
+
+<pre class="install_programlisting">
+[main]
+proxy=http://proxy-server-id.company.com:8080/
+</pre>
+
+
+		<h2><a id="section_repos">Configure Third-party Repositories and Update packages</a></h2>
+
+		<!-- ***** INSTALL FASTEST MIRROR PLUGIN ***** -->
+
+		<h3><a id="item_fastestmirror">Install yum-plugin-fastestmirror for speed</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>A yum plugin called "yum-plugin-fastestmirror" selects the fastest Fedora repository mirror for your location and uses that mirror for all future updates.  Download it now so all future work with yum is as quick as possible.</p>
+
+<pre class="install_programlisting">
+# yum -y install yum-plugin-fastestmirror
+</pre>
+
+		<h3><a id="item_rpmfusion">Install rpmfusion repository</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>Rpmfusion.org provides repositories for packages not included in the Fedora distribution including packages with non-free components.  Enable rpmfusion support now so packages can be installed from it later.</p>
+
+		<p>Enable the <strong>free</strong> and <strong>non-free</strong> repositories on rpmfusion.org</p>
+
+		<p><a href=http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-20.noarch.rpm>Click here to enable the free repository</a> on rpmfusion.org</p>
+
+		<p><a href=http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-20.noarch.rpm>Click here to enable the non-free repository</a> on rpmfusion.org</p>
+
+
+		<!-- ***** UPDATE INITIAL INSTALL PACKAGES ***** -->
+
+		<h3><a id="item_yumupdate">Update base OS install with current packages</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>The packages installed using the installation media may have been replaced by updated versions with bug fixes or security enhancements.  Run yum update now to update all packages.</p>
+
+<pre class="install_programlisting">
+# yum -y update
+</pre>
+
+		<h2><a id="section_packages">Additional Packages</a></h2><p>
+		<!-- ***** PACKAGES ***** -->
+
+		<h3><a id="item_packages">Install Required Packages using "fedora-desktop-packages" script</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>After installing the base OS from the LiveCD, LiveDVD or other media source, I add additional packages and remove a few of the unwanted base packages.  I've written a script called <strong>fedora-desktop-packages</strong> to automate this for me.</p>
+
+		<p><strong>fedora-desktop-packages</strong> contains a set of pre-defined packages to be installed or removed to a Linux system.  When it runs, it examines what is already installed and takes action to install what is missing.</p>
+
+		<p>Right click on <strong><a href=files/fedora-desktop-packages>fedora-desktop-packages</a></strong>, save it locally then make it executable in order to run it:</p>
+
+<pre class="install_programlisting">
+$ chmod u+x fedora-desktop-packages
+</pre>
+
+		<div class="packages_list">
+			<p>It removes these:</p>
+			<ol>
+				<li><strong>Package-Kit-command-not-found</strong> - Tool that attempts to automatically find packages for missing commands entered on the command line. (It triggers on every typo entered and is too slow)
+				<li><strong>khmeros-fonts-common</strong> - (example) Many international fonts that go unused and clutter font menus (for me, maybe not for you!)
+			</ol>
+
+			<p>It installs these:</p>
+
+			<ol>
+				<p><em>Critical Appplications</em></p>
+				<li><strong><a href=http://cinnamon.linuxmint.com/?p=198 target=nemo>nemo</a></strong> - LinuxMint's NEMO File Manager (Gnome Nautilus with tree view) (Fedora20 only)
+				<li><strong>nemo-extensions</strong> - Libraries for Nemo
+				<li><strong>nemo-open-terminal</strong> - Opens a shell in Nemo's curent working directory
+				<p><em>General Applications</em></p>
+				<li><strong><a href=http://www.libreoffice.org/ target=lwri>libreoffice-writer</a></strong> - LibreOffice Word Processor
+				<li><strong>libreoffice-calc</strong> - LibreOffice Spreadsheet
+				<li><strong>libreoffice-base</strong> - LibreOffice Database
+				<li><strong>libreoffice-impress</strong> - LibreOffice Presentations
+				<li><strong>libreoffice-draw</strong> - LibreOffice Drawing
+				<li><strong><a href=http://www.gimp.org/ target=gimp>Gimp</a></strong> - Photo manipulation tool similar to Photoshop
+				<li><strong>gimp-data-extras</strong> - Patterns and other extra files for Gimp
+				<li><strong>gnome-font-viewer</strong> - GNOME Font Viewer (TrueType & OpenType files)
+				<li><strong><a href=http://gcolor2.sourceforge.net/ target=gcolor>gcolor2</a></strong> - Color selection tool (for web development)
+				<li><strong><a href=http://ufraw.sourceforge.net/ target=ufraw>ufraw-gimp</a></strong> - Allows import of raw digital camera photos into Gimp
+				<li><strong><a href=https://wiki.gnome.org/Design/Apps/Music target=gnome-music>gnome-music</a></strong> - Gnome 3.x based Music Player
+				<li><strong><a href=https://wiki.gnome.org/Design/Apps/Photos target=gnome-photos>gnome-photos</a></strong> - Gnome 3.x based Photo Viewer
+				<li><strong><a href=https://wiki.gnome.org/Design/Apps/Maps target=gnome-maps>gnome-maps</a></strong> - Gnome 3.x based Map Application
+				<li><strong><a href=https://wiki.gnome.org/Design/Apps/Weather target=gnome-weather>gnome-weather</a></strong> - Gnome 3.x based Weather Application
+				<li><strong><a href=https://wiki.gnome.org/Apps/Bijiben target=bijiben>bijiben</a></strong> - Gnome 3.x based Note Application
+				<p><em>Multimedia</em></p>
+				<li><strong><a href=http://lame.sourceforge.net/ target=lame>lame</a></strong> - Open Source Audio Encoder
+				<li><strong><a href=http://en.wikipedia.org/wiki/Grip_%28software%29 target=grip>grip</a></strong> - Open Source CD Audio Ripper and Encoder
+				<li><strong><a href=http://projects.gnome.org/rhythmbox/ target=rb>rhythmbox</a></strong> - GNOME Audio Player
+				<li><strong><a href=http://projects.gnome.org/easytag/ target=et>easytag</a></strong> - Absolutely brilliant MP3 id3tag editor
+				<li><strong><a href=http://smplayer.sourceforge.net/ target=smplayer>smplayer</a></strong> - Powerful GUI based front-end for mplayer
+				<li><strong><a href="http://banshee.fm/" target=banshe>banshee</a></strong> - Alternative media player
+				<li><strong><a href=http://download1.rpmfusion.org/free/fedora/releases/20/Everything/x86_64/os/repoview/vlc.html target=vlc>vlc</a></strong> - Video Player
+				<li><strong><a href=http://download1.rpmfusion.org/free/fedora/releases/20/Everything/source/SRPMS/repoview/mplayer.html target=mply>mplayer</a></strong> - Video player (command-line)
+				<li><strong><a href=http://amarok.kde.org/ target=ama>amarok</a></strong> - GUI Audio Player (KDE)
+				<li><strong><a href=http://en.wikipedia.org/wiki/GStreamer target=gs>gstreamer-plugins-*</a></strong> - Streaming media backend (non-GPL plugins)
+				<li><strong><a href=http://en.wikipedia.org/wiki/GStreamer target=gs>gstreamer1-plugins-*</a></strong> - Streaming media backend (non-GPL plugins) (Additional set for Fedora20+)
+				<li><strong><a href=http://download1.rpmfusion.org/free/fedora/releases/20/Everything/source/SRPMS/repoview/xine-lib-extras-freeworld.html target=xle>xine-lib-extras-freeworld</a></strong> - Streaming media backend (non-free plugins)
+				<li><strong><a href=http://download1.rpmfusion.org/free/fedora/releases/20/Everything/source/SRPMS/repoview/gnome-mplayer.html target=mpgui>mplayer-gui</a></strong> - Video player
+				<li><strong><a href=http://download1.rpmfusion.org/free/fedora/releases/20/Everything/source/SRPMS/repoview/gecko-mediaplayer.html target=gmp>gecko-mediaplayer</a></strong> - Video player plugin for Firefox
+				<li><strong><a href=http://download1.rpmfusion.org/free/fedora/updates/20/x86_64/repoview/mencoder.html target=menc>mencoder</a></strong> - Video encoder
+				<li><strong>xine-ui</strong> - Simple GUI Video player 
+				<li><strong>gxine</strong> - Gnome GUI front end to Xine Video player 
+				<li><strong>xine-lib-extras</strong> - Streaming media backend (xine, plugins) 
+				<li><strong><a href=http://download1.rpmfusion.org/free/fedora/releases/20/Everything/x86_64/os/repoview/xine-lib-extras-freeworld.html target=xlef>xine-lib-extras-freeworld</a></strong> - Streaming media backend (xine, more plugins)
+				<p><em>Networking</em></p>
+				<li><strong><a href=http://gftp.seul.org/ target=gftp>gftp</a></strong> - Graphical FTP client
+				<li><strong><a href=http://iptraf.seul.org/about.html target=iptraf>iptraf-ng</a></strong> - Console based network statistics
+				<li><strong><a href=http://jnettop.kubs.info/wiki/ target=jnettop>jnettop</a></strong> - Console based network traffic visualiser
+				<li><strong><a href=http://www.ntop.org/ target=ntop>ntop</a></strong> - Console "network traffic probe"
+				<li><strong><a href=http://remmina.sourceforge.net/ target=rmm>remmina</a></strong> - Remote access client 
+				<li><strong>remmina-plugins-common</strong> - Remmina support files
+				<li><strong>remmina-plugins-gnome</strong> - Remmina plugins for GNOME
+				<li><strong>remmina-plugins-rdp</strong> - Remmina plugins for RDP protocol
+				<li><strong>remmina-plugins-nx</strong> - Remmina plugins for NX protocol
+				<li><strong>remmina-plugins-vnc</strong> - Remmina plugins for VNC protocol
+				<li><strong><a href=http://www.pidgin.im/ target=pid>pidgin</a></strong> - Instant Messaging client
+				<li><strong>pidgin-sipe</strong> - Pidgin support for Microsoft OC/Lync protocol
+				<li><strong>pidgin-logviewer</strong> - Pidgin log viewer
+				<li><strong><a href=http://nmap.org/ target=nmap>nmap</a></strong> - Networking tool - lists open ports on target
+				<li><strong><a href=http://www.bitwizard.nl/mtr/ target=mtr>mtr</a></strong> - Enhanced traceroute
+				<li><strong>mtr-gtk</strong> - GUI version of mtr
+				<li><strong><a href=http://www.gnu.org/software/wget/ target=wget>wget</a></strong> - Web content downloader
+				<li><strong><a href=http://openvpn.net/ target=ovn>openvpn</a></strong> - OpenVPN system
+				<li><strong>NetworkManager-openvpn</strong> - Network Manager plugin for OpenVPN backend
+				<li><strong><a href=http://www.conserver.com/ target=conclient>conserver-client</a></strong> - Client to conserver serial port server system
+				<p><em>Development</em></p>
+				<li><strong><a href=http://meldmerge.org/ target=meld>meld</a></strong> - Visual diff comparision utility for files
+				<li><strong><a href=http://en.wikipedia.org/wiki/Strace target=str>strace</a></strong> - Debugging utility similar to truss from Unix
+				<li><strong><a href=http://www.vim.org/ target=vx11>vim-X11</a></strong> - Vim editor (X11 support)
+				<li><strong>vim-enhanced</strong> - VIM editor (full feature support)
+				<li><strong>kernel-headers</strong> - Kernel headers for VirtualBox
+				<li><strong>kernel-devel</strong> - Kernel source for Virtualbox, others
+				<li><strong>gcc</strong> - GCC for compiling
+				<li><strong><a href=http://en.wikipedia.org/wiki/Dynamic_Kernel_Module_Support target=dkms>dkms</a></strong> - Dynamic Kernel Module Support for VirtualBox
+				<li><strong><a href=http://www.lm-sensors.org/ target=lmsens>lm_sensors</a></strong> - Hardware temperature sensors support
+				<p><em>Utilities</em></p>
+				<li><strong><a href=http://en.wikipedia.org/wiki/Alacarte target=ala>alacarte</a></strong> - GNOME menu editor, used to change 'files' alias from Nautilus to Nemo file manager.
+				<li><strong>dconf-editor</strong> - Used to edit dconf registry settings that manipulate GUI app actions.
+				<li><strong><a href=https://fedorahosted.org/liveusb-creator/ target=liveu>liveusb-creator</a></strong> - Fedora Live USB install stick creator 
+				<li><strong><a href="http://www.k3b.org/" target=k3b>k3b</a></strong> - DVD/CD burner 
+				<li><strong><a href="http://download1.rpmfusion.org/free/fedora/releases/20/Everything/x86_64/os/repoview/k3b-extras-freeworld.html" target=k3bef>k3b-extras-freeworld</a></strong> - K3B Plugins (non-free)
+				<li><strong>unzip</strong> - Extracts data from zip archive files
+				<li><strong>unrar</strong> - Extracts data from rar archive files
+				<li><strong><a href=http://en.wikipedia.org/wiki/Minicom target=mini>minicom</a></strong> - Serial terminal client
+				<li><strong><a href=https://live.gnome.org/GnomeTweakTool target=gtt>gnome-tweak-tool</a></strong> - GUI app for custom-tuning GNOME details
+				<li><strong><a href=http://en.wikipedia.org/wiki/Expect target=expect>expect</a></strong> - Tool for scripting automated interactions (usually with other systems)
+				<li><strong><a href=http://www.atoptool.nl/ target=atop>atop</a></strong> - An advanced version of the classic Unix 'top' program 
+				<li><strong><a href=http://htop.sourceforge.net/ target=htop>htop</a></strong> - Another version of the 'top' program
+				<p><em>Adminstration</em></p>
+				<li><strong><a href=http://puppetlabs.com/puppet/what-is-puppet target=puppet>puppet</a></strong> - Configuration Managment System
+				<li><strong><a href=https://01.org/powertop/ target=pt>powertop</a></strong> - Power consumption monitor and tuning utility from Intel
+				<li><strong>httpd-tools</strong> - Tools for Webserver
+				<li><strong><a href=http://www.coker.com.au/bonnie++/ target=bon>bonnie++</a></strong> - Storage benchmarking
+				<li><strong><a href=http://sg.danny.cz/scsi/lsscsi.html target=lsscsi>lsscsi</a></strong> - Block device reporting tool (scsi, sas, sata, usb, etc)
+				<li><strong><a href=http://sebastien.godard.pagesperso-orange.fr/ target=sysst>sysstat</a></strong> - Various system performance monitoring tools
+				<li><strong><a href=http://gparted.sourceforge.net/ target=gpar>gparted</a></strong> - Disk partitioning GUI front end
+				<p><em>Virtualization</em></p>
+				<li><strong><a href=http://wiki.qemu.org/KVM target=qkvm>qemu-kvm</a></strong> - KVM Virtualization
+				<li><strong><a href=http://wiki.qemu.org/KVM target=qkvmtools>qemu-kvm-tools</a></strong> - KVM Debugging and diagnostics
+				<li><strong>libvirt-daemon-qemu</strong> - Server side daemon for QEMU
+				<li><strong><a href=http://virt-manager.org/ target=vmgr>virt-manager</a></strong> - Virtualization manager 
+				<li><strong><a href=http://people.redhat.com/~rjones/virt-top/ target=vtop>virt-top</a></strong> - "Top" for Virtualization environments
+				<li><strong><a href=http://people.redhat.com/~rjones/virt-what/ target=vhwat>virt-what</a></strong>Tool to detect if we're running in a virtual machine
+				<li><strong>virt-viewer</a></strong> - Allows viewing of KVM consoles
+				<li><strong>libguestfs-tools</a></strong> - Allows the host to modify KVM guest storage (ex: sysprep)
+				<p><em>Services</em></p>
+				<li><strong><a href=http://www.openssh.com/ target=ssh>openssh-server</a></strong> - OpenSSH server
+				<li><strong><a href=http://www.samba.org/ target=scommon>samba-common</a></strong> - Samba server and client programs
+				<li><strong><a href=http://www.samba.org/ target=sclient>samba-client</a></strong> - Samba client programs
+				<li><strong>openssh-clients</strong> - OpenSSH client
+				<li><strong>httpd</strong> - Apache webserver
+				<li><strong><a href=http://sourceforge.net/apps/mediawiki/tigervnc/index.php?title=Welcome_to_TigerVNC target=tvnc>tigervnc-server</a></strong> - VNC server to provide remote access to others
+				<p><em>Application Dependencies</em></p>
+				<li><strong>libpng12.i686</strong> - PNG library (i686 version) for HP Virtual Rooms Dependency
+
+			</ol>
+		</div>
+
+		<h2><a id="section_third">Third-Party Applications</a></h2><p>
+
+		<p>These commercial applications are provided directly from their vendors and require special steps to download and install.</p>
+
+		<!-- ***** ORACLE VIRTUALBOX ***** -->
+
+		<h3><a id="item_virtualbox">Install Oracle VirtualBox</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>VirtualBox has been my primary hypervisor for running Windows virtual machines.</p>
+
+		<ol>
+			<li><a href=https://www.virtualbox.org/wiki/Linux_Downloads>Download Oracle VirtualBox</a>.
+			<li>Download a <a href=https://www.virtualbox.org/wiki/Downloads>VirtualBox extension pack</a> for USB support.
+		</ol>
+
+		<p>Install VirtualBox using yum:</p>
+
+<pre class="install_programlisting">
+# yum -y localinstall ~/Downloads/VirtualBox
+</pre>
+
+		<p>To complete the installation, run the VirtualBox application and install the license pack in File->Preferences->Extensions</p>
+
+		<p>I've used repositories for VirtualBox in the past, but recently found problems with their packages being tied to specific kernels.  Periodic downloads from virtualbox.org is a simple way around this.</p>
+
+
+		<!-- ***** ADOBE FLASH ***** -->
+
+		<h3><a id="item_flash">Install Adobe x86_64 repo for Flash Player</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>Install the Adobe x86_64 repo to enable easy access to flash player updates.</p>
+
+		<ol>
+			<li><a href=http://linuxdownload.adobe.com/adobe-release/adobe-release-x86_64-1.0-1.noarch.rpm>Enable the Adobe x86_64 repository. (Click here)</a> 
+		</ol>
+
+		<p>Or perform these two steps on the command line:</p>
+
+<pre class="install_programlisting">
+# rpm -ivh http://linuxdownload.adobe.com/adobe-release/adobe-release-x86_64-1.0-1.noarch.rpm
+# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-adobe-linux
+</pre>
+
+		<ol start=2>
+			<li>Use yum to download and install the Adobe Flash plugin from the repository.
+		</ol>
+
+<pre class="install_programlisting">
+# yum -y install flash-plugin
+</pre>
+
+		<ol start=3>
+			<li>Restart Firefox 
+			<li><a href=http://www.adobe.com/software/flash/about/ target=FlashCheck>Visit the Adobe Flash Version page</a> to verify flash is working</a>
+		</ol>
+
+
+		<!-- ***** GOOGLE APPLICATIONS ***** -->
+
+		<h3><a id="item_google">Install Google Applications</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<ol>
+			<li>Right click and save this link for the <a href=https://dl-ssl.google.com/linux/linux_signing_key.pub>Google Signing Key</a> or
+		</ol>
+
+<pre class="install_programlisting">
+# wget https://dl-ssl.google.com/linux/linux_signing_key.pub
+</pre>
+
+		<ol start=2>
+			<li>Import the key into the rpm database
+		</ol>
+
+<pre class="install_programlisting">
+# rpm --import linux_signing_key.pub
+</pre>
+
+		<ol start=3>
+			<li><a href=https://www.google.com/intl/en/chrome/browser/ target=dl_chrome>Download the Chrome package</a> (which also enables the chrome repository.)
+		</ol>
+
+<pre class="install_programlisting">
+# yum localinstall google-chrome-stable*
+</pre>
+
+		<ol start=4>
+			<li><a href=http://www.google.com/earth/index.html>Download the Google Earth package</a>
+		</ol>
+
+		<p>Update: Looks like Google Earth has some Fedora 20 issues so as of January 2014, I'm leaving this one off my systems for a bit.</p>
+
+<pre class="install_programlisting">
+# yum localinstall google-earth*
+</pre>
+
+		<h2><a id="section_sysenv">System Security Settings</a></h2>
+
+		<!-- ***** CONFIGURE SELINUX ***** -->
+		<h3><a id="item_selinux">Review SELinux setting: Enforcing or Permissive?</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p><a href=http://fedoraproject.org/wiki/SELinux target=_selinuxfedoradocs>Fedoraproject SELinux Project Pages</a> with links to more information.</p>
+		<p><a href=http://fedoraproject.org/wiki/SELinux target=_selinuxfedoradocs>Fedoraproject: SELinux for Dummies</a> with presentations on SELinux basics.</p>
+
+		<p>SELinux is a policy based security system included with Fedora and enabled by default in a restrictive mode called "Enforcing."<p>
+
+		<p>It has three modes: Enforcing, Permissive and Disabled. For years I ran in permissive so it would catch security issues and report them but <em>not actually block anything</em>. This let me watch and learn but not hit any obstacles.  Users who didn't want to know could simply set SELinux to 'disabled' and not be bothered with it.<p>
+
+		<p>With Fedora 20, I'm going to keep SELinux in <em>enforcing</em> mode on my desktop in order to try it.  If I can adapt to using it I'm sure it'll stick and it's a good thing to learn if you want secure systems.</p>
+
+		<p>You can change the configuration of SELinux simply by editing <strong>/etc/selinux/config</strong> and replace "enforcing" with "permissive" or "disabled":</p>
+
+<pre class="install_programlisting">
+SELINUX=permissive
+</pre>
+
+		<p>SELinux will be in permissive mode when the system is rebooted.</p>
+
+		<!-- ***** CONFIGURE FIREWALL ***** -->
+
+		<h3><a id="item_firewall">Configure Firewall</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p><strong>Leave the firewall enabled if you can and open ports as needed.</strong></p>
+
+		<p>Run the Firewall GUI application, select "Configuration: Permanent" and make these changes:</p>
+
+		<ol>
+			<li>"ssh" - inbound shell access (should be set by installer)
+			<li>"Samba" - allows serving files via CIFS (primarily to Windows VMs)
+		</ol>
+
+		<p>Then, Select Options -> Reload Firewall to make them active.</p>
+
+		<!-- ***** CONFIGURE FONTS ***** -->
+
+		<h2><a id="section_fonts">Fonts</a></h2>
+
+		<h3><a id="item_fonts">Install Custom Fonts</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>I use a variety of commercial fonts in addition to open source fonts provided by the installer.</p>
+
+		<p>To restore these, simply scp them from another system to /usr/share/Core Fonts and they will be automatically identified.</p>
+
+<pre class="install_programlisting">
+maxwell@elite [~] $ ls /usr/share/fonts
+abattis-cantarell  gnu-free                  liberation   stix
+Core Fonts         google-crosextra-caladea  msttcore     tabish-eeyek
+default            google-crosextra-carlito  opensymbol   vlgothic
+dejavu             google-noto               sil-mingzat
+</pre>
+
+		<!-- ***** CONFIGURE MICROSOFT FONTS ***** -->
+
+		<h3><a id="item_msfonts">Install Microsoft Fonts</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>Having standard Windows fonts helps websites designed for Windows look accurate and helps with importing Microsoft Office documents.</p>
+
+		<p>Download <a href=/install/files/windows-fonts.tar.gz target=_winfonts>this archive</a> and place the contents in /usr/share/fonts</p>
+
+		<p>Please do not link directly to this file!</p>
+
+
+		<h3><a id="item_setfoxfonts">Set Minimum Fonts Size in Firefox</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p><em>You may skip this if you're restoring a home directory where this is already set.</em></p>
+
+		<p>Set the minimum font size in firefox to between 14 and 16 points to make it easier to view small text on high resolution displays (especially laptops.)</p>
+
+		<p>Run Firefox.  Go to Edit -> Preferences -> Content -> Fonts & Colors -> Advanced and configure what works best for you.</p>
+
+		<h2><a id="section_specials">Special Installs</a></h2>
+
+		<!-- ***** ADOBE ACROBAT ***** -->
+
+		<h3><a id="item_acrobat">Install Adobe Acrobat Reader</a><a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>Install the official Adobe Acrobat Reader program to overcome small incompatabilities observed with the open source PDF readers.</p>
+
+		<p>Download the rpm from Adobe:</p>
+<pre class="install_programlisting">
+wget http://ardownload.adobe.com/pub/adobe/reader/unix/9.x/9.5.5/enu/AdbeRdr9.5.5-1_i486linux_enu.rpm
+</pre>
+		
+		<p>Install the rpm using yum:</p>
+<pre class="install_programlisting">
+# yum -y localinstall AdbeRdr9.5.5-1_i486linux_enu.rpm
+</pre>
+
+		<!-- ***** ORACLE JAVA JRE ***** -->
+
+		<h3><a id="item_java">Install Oracle Java</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>Due to a few rare problems with OpenJDK in the past, I install Oracle Java and use it instead.</p>
+
+		<p>Use Firefox to download the 64-bit RPM version of Oracle Java from the <a href=http://www.oracle.com/technetwork/java/javase/downloads/index.html target=_sunjava>Oracle JavaSE download page</a>.</p>
+
+		<p>I prefer to download it and then use this command to install it:</p>
+
+<pre class="install_programlisting">
+# yum -y localinstall jre-7u45-linux-x64.rpm
+</pre>
+
+		<p>Use these commands to configure Linux to use Oracle Java instead of OpenJDK Java:</p>
+
+<pre class="install_programlisting">
+# alternatives --install /usr/bin/java java /usr/java/latest/bin/java 200000
+
+# alternatives --install /usr/bin/javaws javaws /usr/java/latest/bin/javaws 200000
+
+# alternatives --install /usr/lib64/mozilla/plugins/libjavaplugin.so libjavaplugin.so.x86_64 /usr/java/latest/lib/amd64/libnpjp2.so 200000
+</pre>
+
+		<p>Restart Firefox to make the plugin active then go to this <a href=http://www.java.com/en/download/testjava.jsp target=javatest>Verify Java Version</a> to verify Java is installed and working in your browser.</p>
+
+		<p>Also, append this to your /etc/bashrc file:<p>
+<pre class="install_programlisting">
+export JAVA_HOME="/usr/java/latest"
+</pre>
+
+   <p><em>Java is regularly being updated to fix security issues, so revisit this step on a regular basis to keep your Java updated.</em></p>
+
+		<!-- ***** NVIDIA PROPRIETARY GRAPHICS ***** -->
+
+		<h3><a id="item_nvidia">Install Nvidia Proprietary Graphics (Optional)</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>I have one system, an older laptop with an Nvidia graphics card, that overheats when I use the open source nouveau drivers.  To overcome this obstacle, I install the Nvidia proprietary drivers which lowers the CPU speed and keeps it from overheating.</p>
+
+		<p>I use the akmod-nvidia package from the rpmfusion.org repository to easily disable the nouveau driver and replace it with the nvidia driver.  This is much easier than installing the driver from nVidia's own website.</p>
+
+<pre class="install_programlisting">
+# yum -y install akmod-nvidia
+</pre>
+
+		<p>When the driver is installed, reboot and test your graphics.</p>
+
+		<p>You'll notice the attractive, kernel-mode based graphical bootup is gone and your prompt for specifying storage system passwords is simple text instead of a nice graphical box.</p>
+
+		<!-- ***** SOLARIZED ***** -->
+
+		<h3><a id="item_solarizedgt">Install Solarized Color Palette for Gnome Terminal</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p><em>You may skip this if you're restoring a home directory where this is already set.</em></p>
+
+		<p>I prefer to replace the default color schemes of Gnome Terminal and Vim with <a href=http://ethanschoonover.com/solarized>Solarized</a>, a meticulously crafted low-contast color palette designed by Ethan Schoonover.</p>
+
+		<p>I roughly follow <a href=http://www.if-not-true-then-false.com/2012/solarized-linux/>this guide</a> to install it.</p>
+
+		<p>As my user, maxwell, not root, I make a projects directory where I can git clone solarized:</p>
+<pre class="install_programlisting">
+$ mkdir -p ~/projects/solarized
+</pre>
+
+		<p>In that directory, git clone solarized:</p>
+<pre class="install_programlisting">
+$ cd ~/projects/solarized
+$ git clone https://github.com/sigurdga/gnome-terminal-colors-solarized.git
+</pre>
+
+		<p>Run this script to configure Gnome Terminal for the Solarized "dark" theme.</p>
+<pre class="install_programlisting">
+$ gnome-terminal-colors-solarized/install.sh
+</pre>
+
+		<p>This script will allow you to choose a light or dark theme and apply it to the default Gnome Terminal profile called 'Default'.</p>
+
+		<h3><a id="item_solarizedvim">Install Solarized Color Palette for Vim</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p><em>You may skip this if you're restoring a home directory where this is already set.</em></p>
+
+		<p>These steps will configure vim for Solarized based vim syntax highlighting.</p>
+
+		<p>These steps download the solarized file for vim and copy it in place.</p>
+<pre class="install_programlisting">
+$ mkdir -p ~/projects/solarized/vim
+$ cd ~/projects/solarized/vim
+
+$ git clone https://github.com/altercation/vim-colors-solarized.git
+
+$ mkdir -p ~/.vim/colors
+
+$ cp vim-colors-solarized/colors/solarized.vim ~/.vim/colors/
+</pre>
+
+		<p>Then add the following to your ~/.vimrc</p>
+<pre class="install_programlisting">
+syntax enable
+set background=dark
+colorscheme solarized
+</pre>
+
+		<h3><a id="item_bashprompt">Install a custom bash prompt</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>I use a custom bash prompt that offers a simple design with subtle colors.  If I'm in a directory that has a .git repository, it will show the current branch of that git repo's development.</p>
+
+		<p>My custom prompt is implemented as a variety of COLOR_ variables (for readability), two git functions borrowed from others on the web, and a function which lets me set the prompt to four styles of slight variation.</p>
+
+		<p>As my user, maxwell, I git clone a copy of my custom bash prompt:</p>
+<pre class="install_programlisting">
+$ mkdir -p ~/projects/
+$ cd ~/projects/
+
+$ git clone https://github.com/maxwax/prompt
+</pre>
+
+		<p>Then, append it to my system's /etc/bashrc so all users (presumably this means 'maxwell' and 'root') get it:</p>
+<pre class="install_programlisting">
+# cat ~/projects/prompt/prompt >> /etc/bashrc
+</pre>
+
+		<p>Login to a new terminal and you should see a new prompt.</p>
+
+		<h2><a id="section_cfg_apps">Configure Applications</a></h2>
+
+		<!-- ***** CONFIGURE CONSERVER ***** -->
+
+		<h3><a id="item_cfg_foxplugins">Configure Firefox Plug-ins)</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>Install the following Firefox plug-ins for a better firefox experience:</p>
+
+		<ol>
+			<li><a href=https://addons.mozilla.org/en-US/firefox/addon/video-downloadhelper/ target=_vdh>Video Download Helper</a> - Allows downloading web videos for offline viewing.
+			<li><a href=https://addons.mozilla.org/en-us/firefox/addon/download-statusbar/ target=_dsb>Download Status Bar</a> - Monitor downloads via statusbar strip instead of separate window.
+			<li><a href=https://addons.mozilla.org/en-US/firefox/addon/flashblock/ target=_fblock>Flashblock</a> - Hide Flash advertisements that waste laptop CPU cycles.
+
+		</ol>
+
+		<!-- ***** CONFIGURE CONSERVER ***** -->
+
+		<h3><a id="item_cfg_conserver">Configure conserver client (corporate)</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>I install a <a href=http://www.conserver.com/ target=_wcs>Conserver</a> client that can access a conserver server.  The conserver system uses a central server to monitor production systems serial port output and brokers access from simultaneous clients.  I only need the client on my Fedora systems.  This was downloaded earlier and needs</p>
+
+		<p>Create a /etc/conserver/console.conf with the following information:</p>
+
+<pre class="install_programlisting">
+# default config for console
+config * {
+  master  my-conserver.company.com;
+  port    3109;
+}
+</pre>
+
+
+		<!-- ***** CONFIGURE PIDGIN ***** -->
+
+		<h3><a id="item_cfg_pidgin">Configure Pidgin Chat client</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p><em>You may skip this if you're restoring a home directory where this is already set.</em></p>
+
+		<p>Pidgin provides me with a single chat client to all the accounts I use at home and work:</p>
+
+		<ol>
+			<li>Google Chat
+			<li>IRC
+			<li>Microsoft Office Communicator/Lync
+		</ol>
+
+		<p>Run Pidgin, then use Accounts -> Manage Accounts to set these up individually through Pidgin's user interface.</p>
+
+		<p>OR, copy a previously created $HOME/.purple directory into the new home directory and see if Pidgin uses the old settings.</p>
+
+		<!-- ***** CONFIGURE OPENVPN ***** -->
+
+		<h3><a id="item_cfg_openvpn">Configure OpenVPN client (corporate)</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>OpenVPN is used to access a variety of secure networks in my life. Configuration is simple:</p>
+
+		<ol>
+			<li>Copy the existing openvpn.conf configuration file and cert key file to /etc/openvpn
+			<li>Launch openvpn to verify
+		</ol>
+
+		<!-- ***** CONFIGURE SAMBA ***** -->
+
+		<h3><a id="item_cfg_samba">Configure Samba</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>Samba provides network file sharing services to Windows clients.  A Samba server running on a host enables Windows virtual machines to access the host's files.</p>
+
+		<p>First, set a samba password for your user:</p>
+
+<pre class="install_programlisting">
+$ smbpasswd -a
+New SMB password: ********
+Retype new SMB password: *******
+</pre>
+
+		<p>Next, edit /etc/samba/smb.conf and make the following changes:</p>
+
+		<ol>
+			<li>Set the workgroup name
+			<li>Set the server string
+			<li>Allow Samba traffic on selected interfaces including VirtualBox and KVM host only networks
+			<li>Set security to simple user passwords on the host
+			<li>Configure access to users home directories via Samba
+			<li>Configure access to specific directories on the host (outside of users' homes)
+		</ol>
+
+<pre class="install_programlisting">
+[global]
+workgroup = MY-SERVER-NAME-GROUP
+server string = My Fedora Samba Server
+interfaces = lo eth0 192.168.122.0/24 192.168.56.0/24
+security = user
+</pre>
+
+		<p>Remove eth0 from above if you wish to ONLY share files with the virtual machines on your host and not with other computers on your network.</p>
+
+<pre class="install_programlisting">
+[homes]
+comment = Home Directories
+browseable = no
+writeable = yes
+</pre>
+
+		<p><em>Note that in Fedora 20, externally mounted drives are now at /run/media/(user)/(medianame) instead of /media/(medianame) so edit your old Samba files accordingly.</em></p>
+		<p>Music files shared from the host to others:</p>
+
+<pre class="install_programlisting">
+[music]
+comment = Music share
+path = /run/media/maxwell/music/
+browseable = yes
+writeable = yes
+valid users = maxwell
+</pre>
+
+		<p>This is a single folder in my home directory shared to VMs when I don't want to share my full home directory:</p>
+
+<pre class="install_programlisting">
+[vmxfer]
+comment = Virtual Machine Transfer folder
+path = /home/maxwell/vmxfer
+browseable = yes
+writeable = yes
+valid users = maxwell
+</pre>
+
+		<p>As root, use systemctl to configure the system to start samba upon boot and issue two commands to start the services immediately for use.</p>
+
+<pre class="install_programlisting">
+# Configure the services to start 
+
+# systemctl enable smb
+# systemctl enable nmb
+
+# Start the services
+
+# systemctl start smb
+# systemctl start nmb
+</pre>
+
+		<h4>Configure SELinux for Samba</h4>
+
+		<p>I had to do the following adjustments to get Samba and SELinux to work on my Fedora 20 system:</p>
+
+		<ol>
+			<li>Enable /home directories to be shared with Samba by setting the SELInux boolean:
+		</ol>
+<pre class="install_programlisting">
+# setsebool -P samba_enable_home_dirs 1
+</pre>
+
+		<ol start=2>
+			<li>Ensure that /home has the proper SELinux context label to be understood as a /home directory.
+		</ol>
+<pre class="install_programlisting">
+# restorecon -R -v /home
+</pre>
+
+		<p>With a fresh install of Fedora 20 making a new /home directory, you shouldn't need to do step two.</p>
+
+		<p>In my case, my /home directory is a filesystem on a pair of separate disks using raid+luks+lvm and it was created by hand.  So when it was created, I didn't label it with the proper SELinux context.</p>
+
+		<p>I used these simple Fedora docs on configuring <a href=http://fedoraproject.org/wiki/SELinux/samba target=_selinuxsamba>SELinux with Samba</a></p>
+
+		<!-- ***** CONFIGURE VIRTUALBOX ***** -->
+
+		<h3><a id="item_cfg_virtualbox">Configure VirtualBox</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>The following list finishes confguring VirtualBox for use.  You'll need to reboot the system to activate its full networking and other features before testing restored virtual machines that use those host-only networking and USB support.</p>
+
+		<ol>
+			<li>Add my user, maxwell, to the vboxusers group.
+			<li>Run the VirtualBox GUI and use it install an extensions pack.
+			<li>Restore any virtual machine images to the $HOME/VirtualBox directory.
+			<li>Run each VM and verify proper operation
+			<ul>
+				<li>Test access to the internet from within a VM
+				<li>Test access to the host-only based Samba file sharing from within a VM
+			</ul>
+		</ol>
+
+		<p>You can download the VirtualBox extensions pack <a href=https://www.virtualbox.org/wiki/Downloads target=_vbpack>from here</a> then use Virtualbox -> Preferences -> Extensions to install it.
+
+		<p>After you reboot to active all features, ensure that Virtualbox's internal network is working:  The host 'vhostnet' device should have an IP address of 192.168.56.1:</p>
+
+<pre class="install_programlisting">
+# ifconfig
+</pre>
+
+		<!-- ***** CONFIGURE FIXES ***** -->
+
+		<h2><a id="section_fixes">Configure Fixes</a></h2><p>
+
+		<h3><a id="item_cfg_nemofix">Disable Nemo's Handling of Desktop Backgrounds</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>The Nemo file manager is a fork of the Gnome 2.x file manager that has featurs -- a tree view! -- that Gnome 3.x's Nautilus file manager does not.  Naturally, I use Nemo.</p>
+
+		<p>When Nemo is run, it attempts to replace Gnome 3's desktop background with one of its own and ends up presenting a black desktop instead.</p>
+
+		<p>Fix this by changing a simple gnome registry setting:</p>
+
+<pre class="install_programlisting">
+$ dconf write /org/nemo/desktop/show-desktop-icons false
+</pre>
+
+		<p>You can also use the dconf GUI to find this key and explore related values interactively.</p>
+
+		<!-- ***** GNOME SETTINGS ***** -->
+
+		<h2><a id="section_gnomeenv">Gnome Environmental Settings</a></h2><p>
+
+		<p>These configuration changes can be made while the previous 'yum update' activity or 'packages' script activites are in progress.</p>
+
+		<p>The following activities can be performed interactively while other programs are being installed.</p>
+
+		<p>Run the <strong>System Settings</strong> program to make these changes:</p>
+
+		<ul>
+			<li><strong>Background:</strong>
+			<ul>
+				<li>Set the desktop background
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Online Accounts:</strong>
+			<ul>
+				<li>Configure Google and Facebook for Calendaring, Messaging.
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Privacy:</strong>
+			<ul>
+				<li>Disable Screen Lock
+				<li>Adjust File Usage & History tracking
+				<li>Adjust Trash & Temporary file handling
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Keyboard:</strong>
+			<ul>
+				<li>Set the "Menu" key to "Lower window below other windows" (Shortcuts->Windows)
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Network:</strong>
+			<ul>
+				<li>Configure Wireless or Wired network settings that weren't setup during the install process
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Power:</strong>
+			<ul>
+				<li>Set "Dim Screen when inactive" ON
+				<li>Set "Blank Screen" to what you like. I keep it at 5 minutes on older, power-hungry laptops
+				<li>Set "Automatic Suspend" to Off
+				<li>Set "When battery power is critical" to Hibernate so the system freezes your work without losing it.
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Printers:</strong>
+			<ul>
+				<li>Configure printers if they are available
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Date & Time:</strong>
+			<ul>
+				<li>Set "Automatic Date & Time" to ON to use NTP servers
+				<li>Set "Automatic Time Zone" to ON to use NTP servers
+				<li>Set "Time Format" to AM/PM instead of 24-hour format
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Details:</strong>
+			<ul>
+				<li>Set Default Applications such as "Image Viewer" for photos instead of Shotwell
+				<li>Configure handling of Removeable Media such as CDs, DVDs, etc.
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Sharing:</strong>
+			<ul>
+				<li>Verify that "Screen Sharing" and "Media Sharing" are set to "Off" to keep data secure
+				<li>Verify that "Remote Login" is set to "On" for ssh
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Users:</strong>
+			<ul>
+				<li>Configure the primary user to have a real photo or something attractive
+				<li>Create a guest user and set a guest user password. (More than one user enables the 'Log Off' Gnome menu item
+			</ul>
+		</ul>
+
+		<p>Run the <strong><a id="section_tweak">Advanced System Settings</a></strong> (aka Gnome Tweak Tool) program to make these changes:</p>
+
+		<p><em>If you restore a home directory where this is already set these may be set for you.</em></p>
+
+		<ul>
+			<li><strong>Fonts:</strong>
+			<ul>
+				<li>Set "Window Titles" to "Lucida Sans Std 11 pt"
+				<li>Set "Interface" to "Lucida Sans Std 11 pt"
+				<li>Set "Hinting" to "Medium"
+				<li>Set "Scaling Factor" to "1.2" or higher for high resolution laptops to make text readable
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Top Bar:</strong>
+			<ul>
+				<li>Check "Show Date" so the top title bar has the date and time displayed
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Windows:</strong>
+			<ul>
+				<li>Set "Focus Mode" to "Mouse" for classic Unix style mouse-focus
+				<li>Set "Titlebar Actions: Double-Click" to "Toggle Maximize Vertically"
+				<li>Set Titlebar Buttons "Maximize" and "Minimize" to "ON" so they are visible
+			</ul>
+		</ul>
+		<ul>
+			<li><strong>Workspaces:</strong>
+			<ul>
+				<li>Set "Workspace Creation" to "Static" instead of Dynamic so workspaces are predictable
+				<li>Set "Number of Workspaces" to 4-6 depending on your system's needs
+				<li>Set "Workspaces only on primary display" as you prefer
+			</ul>
+		</ul>
+
+		<h3><a id="section_usenemo">GNOME Alias Changes</a></h3>
+
+		<p><em>If you restore a home directory where this is already set these may be set for you.</em></p>
+
+		<p>I use the Gnome 2.x based Nemo file manager because the Gnome 3.x based Nautilus file manager doesn't have a Tree View.  How can you now have a tree view in a file manager?</p>
+
+		<p>Use the Alacarte (aka GNOME "Main Menu") editor to <strong>use Nemo as the default file manager</strong>.
+
+		<ol>
+			<li>Run Alacarte
+			<li>Select Accessories group
+			<li>Find the "Files" entry whose icon is a grey file cabinet. Uncheck this item.
+			<li>Find the "Files" entry whose icon is a tan file folder.  Check this item.
+		</ol>
+
+
+		<!-- ***** GNOME SHELL EXTENSIONS***** -->
+		<h2><a id="section_extensions">GNOME Shell Extensions</a></h2>
+
+
+		<h3>Overview</h3>
+
+		<p><a href=https://extensions.gnome.org/about/ target=about_gse>Gnome Shell Extensions</a> are small but powerful javascript programs that change and enhance the Gnome Shell environment to suit your specific needs.</p>
+
+		<p>The right set of extensions turns a frustrating default Gnome Shell graphical environment into a highly tailored, powerful, graphical environment that is a true pleasure to use.</p>
+
+		<p>Extensions can be installed, enabled and disabled via the <a href=https://extensions.gnome.org/ target=_ge>Gnome Extensions</a> web page.</p>
+
+		<table class="install_ext_table">
+			<tr>
+
+				<td>
+					<!-- ***** EXTENSIONS Launch New Instance ***** -->
+
+					<h3><a id="item_alwayslaunch"> "Launch New Instance"</a></h3>
+
+					<p>This extension modifies the Gnome Dash (App dock) to launch new instances of each program when you click on an icon.  The normal behavior is only launch one and focus on it if additional clicks occur.</p>
+
+					<p>For many users like myself, this is <em>vital</em> to making Gnome comfortable</p>
+
+					<p><a href=https://extensions.gnome.org/extension/600/launch-new-instance/ target=_lni>Enable Launch New Instance</a></p>
+				</td>
+
+				<td>
+
+					<!-- ***** EXTENSIONS Weather ***** -->
+
+					<h3><a id="item_weather"> "Weather by Neroth"</a></h3>
+
+					<p>Weather places a summary of the weather ("Clear Sky, 32 F") on the top bar and provides a well presented weather summary when you click on it.</p>
+
+					<p><a href=https://extensions.gnome.org/extension/613/weather/ target=_weather>Enable Weather (by Neroth)</a></p>
+				</td>
+
+				<td>
+
+					<!-- ***** EXTENSIONS Recent Items ***** -->
+
+					<h3><a id="item_recent"> "Recent Items"</a></h3>
+
+					<p>Recent Items provides a small icon on the top bar that shows a list of recently used files when clicked.  The quick access to a just-used file is very satisfying.</p>
+
+					<p><a href=https://extensions.gnome.org/extension/72/recent-items/ target=_recent>Enable Recent Items</a></p>
+
+				</td>
+
+			</tr>
+			<tr>
+				<td>
+
+					<!-- ***** EXTENSIONS Recent Items ***** -->
+
+					<h3><a id="item_music"> "Media Player Indicator"</a></h3>
+
+					<p>This provides a top-bar drop down icon with information on media playing from programs like Rhythmbox</p>
+
+					<p><a href=https://extensions.gnome.org/extension/55/media-player-indicator/ target=_mplayer>Enable Media Player Indicator</a></p>
+
+				</td>
+				<td>
+
+					<!-- ***** EXTENSIONS Advanced Volume Mixer ***** -->
+
+					<h3><a id="item_mixer"> "Advanced Volume Mixer"</a></h3>
+
+					<p>This provides quick access to mixer controls beyond just volume.  It allows me to easily switch between HDMI speakers and headphone speakers very easily.</p>
+
+					<p><a href=https://extensions.gnome.org/extension/212/advanced-volume-mixer/ target=_mixer>Enable Advanced Volume Mixer</a></p>
+
+				</td>
+				<td>
+					<!-- ***** EXTENSIONS Music Integration ***** -->
+					<h3><a id="item_integration"> "Music Integration"</a></h3>
+
+					<p>(Desired): Music Integration provides subtle notifications of tracks playing from several Linux audio players.</p>
+
+					<p><a href=https://extensions.gnome.org/extension/30/music-integration/ target=_mi>Enable Music Integration.</a></p>
+
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<!-- ***** EXTENSIONS Monitor Status Indicator ***** -->
+					<h3><a id="item_monitor"> "Monitor Status Indicator"</a></h3>
+
+					<p>(Optional): Monitor status provides a drop down menu for changing monitor layout from portrait to landscape.  You might like this if you have a tilt-able monitor and occasionally switch from one mode to another.</p>
+
+					<p><a href=https://extensions.gnome.org/extension/11/monitor-status-indicator/ target=_ms>Enable Monitor Status Indicator</a></p>
+
+				</td>
+				<td>
+					<!-- ***** EXTENSIONS Workspace Indicator ***** -->
+					<h3><a id="item_workspace">"Workspace Indicator"</a></h3>
+
+					<p>(Optional): Workspace Indicator shows the workspace your desktop is focused on as a numbered icon on the top right panel.  I've been a heavy user of workspaces for years and I'm used to having a simple way to tell which workspace my desktop is currently focused on.</p> 
+					<p><a href=https://extensions.gnome.org/extension/21/workspace-indicator/ target=_wi>Enable Workspace Indicator</a></p>
+				</td>
+				<td>
+					<!-- ***** EXTENSIONS Easy Screen Cast ***** -->
+					<h3><a id="item_screencast">"Easy Screen Cast"</a></h3>
+
+					<p>(Optional): Workspace Indicator shows the workspace your desktop is focused on as a numbered icon on the top right panel.  I've been a heavy user of workspaces for years and I'm used to having a simple way to tell which workspace my desktop is currently focused on.</p> 
+					<p><a href=https://extensions.gnome.org/extension/21/workspace-indicator/ target=_workspace>Enable Easy Screen Cast</a></p>
+					</br> </br>
+				</td>
+			</tr>
+		</table>
+
+		<!-- ***** GNOME SHELL EXTENSIONS***** -->
+		<h2><a id="section_restore">Restore Data</a></h2>
+
+		<!-- ***** RESTORE DATA ***** -->
+
+		<h3><a id="item_data">Restore User Files</a> <a href=#top class="install_boxtop">Top</a></h3>
+
+		<p>At this point, I've built and configured a Fedora workstation with all the tools and settings to let me be comfortable and productive.</p>
+
+		<p>I'll now carefully copy or restore user files to my home directory and begin using the system.</p>
+
+		<p>For the first time, with Fedora 20, I've restored my entire /home directory from Fedora 19 and dropped it in place with all the new systems and applications of Fedora 20.</p>
+
+		<p>This is a common practice for other users but I've been reluctant to use this method in the past for fear that some new or bleeding edge application or system in Fedora will not like my old, existing config files.</p>
+
+		<p>So far with Fedora 20, dropping my old /home in place has worked wonderfully and saved a lot of time.  Many of the configuration steps above can be completely skipped as their configurations are inherited from the old config files.</p>
+
+		<!-- ***** RESTORE EVOLUTION EMAIL ***** -->
+
+		<h1>Done! Now I actually get to <i>use</i> my new Fedora system!</p>
+	</div>
+
+</body></html>

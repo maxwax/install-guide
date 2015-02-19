@@ -1,0 +1,427 @@
+#!/bin/bash
+
+# fedora-desktop-packages - 
+#		Automatically installs desired packages and removes 
+#		undesired packages to convert an existing Linux system
+#		into a custom configuration that meets a user's specific
+#		package needs.
+
+# set version here each time we update the most recent changelog
+VERSION=2015.0218.01
+
+# Set defaults here, we don't want any null values referenced later.
+# Simple toggle to enable debugging output
+DEBUG_MODE=false
+
+# Do not list packages - process them - by default
+LIST_PACKAGES="no"
+
+# Do not list packages in html format - use a plain list - by default
+HTML_LIST_PACKAGES="no"
+
+# Query only
+QUERY_ONLY="no"
+
+# Check for root user
+if [[ $UID != 0 ]]
+then
+	echo "You must be root or use 'sudo' to run this program."
+	exit 1
+fi
+
+# Display syntax
+function usage {
+	echo "packages $VERSION"
+	echo
+	echo "usage: packages <options>"
+	echo
+	echo "--debug     Debug mode on (mostly for development use)"
+	echo
+	echo "--query     Query packages for it's changelist but do not do anything"
+	echo
+	echo "--list      List all packages checked for inclusion in ASCII format"
+	echo "               Useful for external documentation by the author"
+	echo
+	echo "--htmllist  List all packages checked for inclusion in HTML format"
+	echo "               Useful for external web based documentation by the author"
+	echo
+	echo "-h --help      Show this syntax information"
+	echo
+}
+
+# Process command line arguments
+while [[ "$1" != "" ]]
+do
+	case $1 in
+
+		-q | --query )
+			shift
+			QUERY_ONLY="yes";;
+
+		-d | --debug )
+			shift
+			DEBUG_MODE=true;;
+
+		-l | --list )
+			shift
+			LIST_PACKAGES="yes";;
+
+		--htmllist )
+			shift
+			LIST_PACKAGES="yes"
+			HTML_LIST_PACKAGES="yes";;
+
+		-h | --help | --syntax )
+			usage
+			exit 0;;
+
+		*)
+			usage ;;
+	esac
+done
+
+function is_package_installed () {
+
+	# check to see if package is installed,
+	# if yes, it will print the full package name
+	# if no, it will include the words 'not installed' in the output
+
+	if [[ `rpm -q ${1} | grep "not installed" | wc -l` -gt 0 ]]
+	then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# Set defaults here so we don't have null values or re-used values later.
+INSTALL_PACKAGES=""
+REMOVE_PACKAGES=""
+
+# SPECIFIC PACKAGES TO REMOVE
+REMOVE_PACKAGES="$REMOVE_PACKAGES PackageKit-command-not-found"
+
+# UNWANTED FONTS
+REMOVE_PACKAGES="$REMOVE_PACKAGES khmeros-fonts-common khmeros-base-fonts lohit-devangari sil-abyssinica-fonts sil-padauk-fonts lohit-kannada smc-meera-fonts paktype-naqsh lohit-assamese thai-scalable-fonts-common lklug-fonts lohit-telugu wqy-zenhei paratype-pt-sans thai-scalable-waree lohit-tamil cjkuni-uming lohit-punjabi jomolhari lohit-gujarati lohit-gujarati-fonts lohit-oriya-fonts lohit-punjabi-fonts lohit-assamese-fonts sil-nuosu-fonts cjkuni-uming-fonts nhn-nanum-gothic-fonts lohit-tamil-fonts wqy-zenhei-fonts lohit-devanagari-fonts lohit-telugu-fonts lohit-bengali-fonts paktype-naqsh-fonts lohit-kannada-fonts jomolhari-fonts paratype-pt-sans-fonts smc-fonts-common"
+
+#
+# INSTALL PACKAGES HANDLING HERE
+#
+
+# MULTIMEDIA
+INSTALL_PACKAGES="$INSTALL_PACKAGES lame"
+INSTALL_PACKAGES="$INSTALL_PACKAGES grip"
+INSTALL_PACKAGES="$INSTALL_PACKAGES rhythmbox"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer-ffmpeg"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer-plugins-ugly"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer-plugins-bad"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer-plugins-bad-nonfree"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer-plugins-good-extras"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer-plugins-good"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer-plugins-base-tools"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer-plugins-base"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer-plugins-base"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer-plugins-bad-free"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer-plugins-ugly"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer1-plugins-bad-freeworld"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gstreamer1-libav"
+INSTALL_PACKAGES="$INSTALL_PACKAGES amarok"
+INSTALL_PACKAGES="$INSTALL_PACKAGES mplayer"
+INSTALL_PACKAGES="$INSTALL_PACKAGES mencoder"
+INSTALL_PACKAGES="$INSTALL_PACKAGES mplayer-gui"
+INSTALL_PACKAGES="$INSTALL_PACKAGES smplayer"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gecko-mediaplayer"
+INSTALL_PACKAGES="$INSTALL_PACKAGES xine-ui"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gxine"
+INSTALL_PACKAGES="$INSTALL_PACKAGES xine-lib-extras"
+INSTALL_PACKAGES="$INSTALL_PACKAGES vlc"
+INSTALL_PACKAGES="$INSTALL_PACKAGES easytag"
+INSTALL_PACKAGES="$INSTALL_PACKAGES k3b"
+INSTALL_PACKAGES="$INSTALL_PACKAGES k3b-extras-freeworld"
+INSTALL_PACKAGES="$INSTALL_PACKAGES banshee"
+INSTALL_PACKAGES="$INSTALL_PACKAGES avidemux-gtk"
+INSTALL_PACKAGES="$INSTALL_PACKAGES flac"
+
+# MISC GNOME APPLICATIONS
+INSTALL_PACKAGES="$INSTALL_PACKAGES gnome-music"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gnome-photos"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gnome-maps"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gnome-weather"
+INSTALL_PACKAGES="$INSTALL_PACKAGES bijiben"
+
+# PRODUCTIVITY
+INSTALL_PACKAGES="$INSTALL_PACKAGES libreoffice-writer"
+INSTALL_PACKAGES="$INSTALL_PACKAGES libreoffice-calc"
+INSTALL_PACKAGES="$INSTALL_PACKAGES libreoffice-base"
+INSTALL_PACKAGES="$INSTALL_PACKAGES libreoffice-impress"
+INSTALL_PACKAGES="$INSTALL_PACKAGES libreoffice-draw"
+
+# GRAPHICS
+INSTALL_PACKAGES="$INSTALL_PACKAGES gcolor2"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gimp"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gimp-data-extras"
+INSTALL_PACKAGES="$INSTALL_PACKAGES ufraw-gimp"
+INSTALL_PACKAGES="$INSTALL_PACKAGES hugin"
+INSTALL_PACKAGES="$INSTALL_PACKAGES luminance-hdr"
+INSTALL_PACKAGES="$INSTALL_PACKAGES darktable"
+
+# INSTANT MESSAGING
+INSTALL_PACKAGES="$INSTALL_PACKAGES pidgin"
+INSTALL_PACKAGES="$INSTALL_PACKAGES pidgin-sipe"
+INSTALL_PACKAGES="$INSTALL_PACKAGES pidgin-logviewer"
+
+# GNOME TOOLS
+INSTALL_PACKAGES="$INSTALL_PACKAGES gnome-tweak-tool"
+INSTALL_PACKAGES="$INSTALL_PACKAGES alacarte"
+INSTALL_PACKAGES="$INSTALL_PACKAGES dconf-editor"
+
+# CINNAMON FILE MANAGER (WITH TREE)
+INSTALL_PACKAGES="$INSTALL_PACKAGES nemo"
+INSTALL_PACKAGES="$INSTALL_PACKAGES nemo-extensions"
+INSTALL_PACKAGES="$INSTALL_PACKAGES nemo-open-terminal"
+
+# DEVOPS
+INSTALL_PACKAGES="$INSTALL_PACKAGES vagrant"
+INSTALL_PACKAGES="$INSTALL_PACKAGES vagrant-libvirt"
+INSTALL_PACKAGES="$INSTALL_PACKAGES vagrant-lxc"
+INSTALL_PACKAGES="$INSTALL_PACKAGES docker"
+INSTALL_PACKAGES="$INSTALL_PACKAGES fedora-dockerfiles"
+INSTALL_PACKAGES="$INSTALL_PACKAGES docker-io-vim"
+
+# SOFTWARE DEVELOPMENT
+INSTALL_PACKAGES="$INSTALL_PACKAGES git"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gitg"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gitk"
+
+# APACHE
+INSTALL_PACKAGES="$INSTALL_PACKAGES httpd"
+INSTALL_PACKAGES="$INSTALL_PACKAGES httpd-tools"
+
+# SAMBA FILE SHARING
+INSTALL_PACKAGES="$INSTALL_PACKAGES samba"
+INSTALL_PACKAGES="$INSTALL_PACKAGES samba-client"
+INSTALL_PACKAGES="$INSTALL_PACKAGES samba-common"
+
+# SSH
+INSTALL_PACKAGES="$INSTALL_PACKAGES openssh-server"
+INSTALL_PACKAGES="$INSTALL_PACKAGES openssh-clients"
+INSTALL_PACKAGES="$INSTALL_PACKAGES sshpass"
+
+# KVM VIRTUALIZATION
+INSTALL_PACKAGES="$INSTALL_PACKAGES qemu-kvm"
+INSTALL_PACKAGES="$INSTALL_PACKAGES qemu-kvm-tools"
+INSTALL_PACKAGES="$INSTALL_PACKAGES virt-manager"
+INSTALL_PACKAGES="$INSTALL_PACKAGES virt-top"
+INSTALL_PACKAGES="$INSTALL_PACKAGES libvirt-daemon-qemu"
+INSTALL_PACKAGES="$INSTALL_PACKAGES virt-viewer"
+INSTALL_PACKAGES="$INSTALL_PACKAGES libguestfs-tools"
+INSTALL_PACKAGES="$INSTALL_PACKAGES virt-what"
+
+# REMOTE ACCESS
+INSTALL_PACKAGES="$INSTALL_PACKAGES tigervnc-server"
+INSTALL_PACKAGES="$INSTALL_PACKAGES remmina"
+INSTALL_PACKAGES="$INSTALL_PACKAGES remmina-plugins-rdp"
+INSTALL_PACKAGES="$INSTALL_PACKAGES remmina-plugins-nx"
+INSTALL_PACKAGES="$INSTALL_PACKAGES remmina-plugins-vnc"
+INSTALL_PACKAGES="$INSTALL_PACKAGES remmina-plugins-gnome"
+
+# SHELL TOOLS
+INSTALL_PACKAGES="$INSTALL_PACKAGES pv"
+INSTALL_PACKAGES="$INSTALL_PACKAGES expect"
+INSTALL_PACKAGES="$INSTALL_PACKAGES unzip"
+INSTALL_PACKAGES="$INSTALL_PACKAGES unrar"
+
+# LIVE BOOT CREATORS
+INSTALL_PACKAGES="$INSTALL_PACKAGES liveusb-creator"
+INSTALL_PACKAGES="$INSTALL_PACKAGES unetbootin"
+
+# AUTHENTICATION
+INSTALL_PACKAGES="$INSTALL_PACKAGES openldap-clients"
+
+# PASSWORD MANAGERS
+INSTALL_PACKAGES="$INSTALL_PACKAGES keepassx"
+
+# TEXT EDITING
+INSTALL_PACKAGES="$INSTALL_PACKAGES meld"
+INSTALL_PACKAGES="$INSTALL_PACKAGES vim-X11"
+INSTALL_PACKAGES="$INSTALL_PACKAGES vim-enhanced"
+
+# KERNEL SOURCE (SOME REQUIRED FOR VIRTUALBOX MODULES)
+INSTALL_PACKAGES="$INSTALL_PACKAGES kernel-headers"
+INSTALL_PACKAGES="$INSTALL_PACKAGES kernel-devel"
+INSTALL_PACKAGES="$INSTALL_PACKAGES gcc"
+INSTALL_PACKAGES="$INSTALL_PACKAGES dkms"
+
+# HARDWARE METRICS
+INSTALL_PACKAGES="$INSTALL_PACKAGES lm_sensors"
+INSTALL_PACKAGES="$INSTALL_PACKAGES bonnie++"
+INSTALL_PACKAGES="$INSTALL_PACKAGES lsscsi"
+INSTALL_PACKAGES="$INSTALL_PACKAGES sysstat"
+INSTALL_PACKAGES="$INSTALL_PACKAGES powertop"
+
+# PERFORMANCE MONITORING
+INSTALL_PACKAGES="$INSTALL_PACKAGES atop"
+INSTALL_PACKAGES="$INSTALL_PACKAGES jnettop"
+INSTALL_PACKAGES="$INSTALL_PACKAGES iptraf-ng"
+INSTALL_PACKAGES="$INSTALL_PACKAGES strace"
+INSTALL_PACKAGES="$INSTALL_PACKAGES ntop"
+INSTALL_PACKAGES="$INSTALL_PACKAGES htop"
+INSTALL_PACKAGES="$INSTALL_PACKAGES fio"
+INSTALL_PACKAGES="$INSTALL_PACKAGES wireshark-gnome"
+
+# NETWORKING TOOLS
+INSTALL_PACKAGES="$INSTALL_PACKAGES nmap"
+INSTALL_PACKAGES="$INSTALL_PACKAGES mtr"
+INSTALL_PACKAGES="$INSTALL_PACKAGES mtr-gtk"
+INSTALL_PACKAGES="$INSTALL_PACKAGES wget"
+INSTALL_PACKAGES="$INSTALL_PACKAGES openvpn"
+INSTALL_PACKAGES="$INSTALL_PACKAGES NetworkManager-openvpn"
+
+# SERIAL COMMUNICATIONS
+INSTALL_PACKAGES="$INSTALL_PACKAGES conserver-client"
+INSTALL_PACKAGES="$INSTALL_PACKAGES minicom"
+
+# STORAGE TOOLS
+INSTALL_PACKAGES="$INSTALL_PACKAGES gparted"
+
+# List installed packages
+function list_packages {
+
+	echo "Listing packages..."
+
+	for EACH_PACKAGE in $INSTALL_PACKAGES
+	do
+		if [[ $HTML_LIST_PACKAGES == "yes" ]]
+		then
+			echo "<li><strong>$EACH_PACKAGE</strong> - </li>"
+		else
+			echo $EACH_PACKAGE
+		fi
+	done
+}
+
+# List packages to be installed & removed
+if [[ $LIST_PACKAGES == "yes" ]]
+then
+	list_packages
+	exit 0
+fi
+
+# do this first before the bulk of installation work
+is_package_installed yum-plugin-fastestmirror
+retval=$?
+if [[ $retval ]]
+then
+	if [[ $DEBUG_MODE == true ]]
+	then
+		echo "Fastest Mirror already installed."
+	fi
+else
+	if [[ $DEBUG_MODE == true ]]
+	then
+		echo "Installing yum-plugin-fastestmirror before any other package installs."
+	fi
+	yum -y install yum-plugin-fastestmirror
+fi
+
+# Default these to false, set if we have install or removal work to do
+INSTALL_NEEDED=false
+REMOVAL_NEEDED=false
+
+# Start with empty package lists
+TO_INSTALL_LIST=""
+TO_REMOVE_LIST=""
+
+# Review wanted packages
+for EACH_PACKAGE in $INSTALL_PACKAGES
+do
+
+	is_package_installed "$EACH_PACKAGE"
+	retval=$?
+
+	if [[ $retval == 1 ]]
+	then
+		if [[ $DEBUG_MODE == true ]]
+		then
+			echo "$EACH_PACKAGE is already installed."
+		fi
+	else
+		if [[ $DEBUG_MODE == true ]]
+		then
+			echo "$EACH_PACKAGE needs to be installed."
+		fi
+
+		TO_INSTALL_LIST="$TO_INSTALL_LIST $EACH_PACKAGE"
+		INSTALL_NEEDED=true
+	fi
+
+done
+
+# Review unwanted packages
+for EACH_PACKAGE in $REMOVE_PACKAGES
+do
+
+	is_package_installed "$EACH_PACKAGE"
+	retval=$?
+
+	if [[ $retval == 1 ]]
+	then
+		if [[ $DEBUG_MODE == true ]]
+		then
+			echo "$EACH_PACKAGE needs to be removed."
+		fi
+
+		TO_REMOVE_LIST="$TO_REMOVE_LIST $EACH_PACKAGE"
+		REMOVAL_NEEDED=true
+	fi
+
+done
+
+echo
+
+# Default user confirmations to no
+INSTALL_YESNO="n"
+REMOVE_YESNO="n"
+
+# check for packages to install
+if [[ $INSTALL_NEEDED == true ]]
+then
+	# query user now and apply changes below in one pass
+	echo "Packages to be installed: $TO_INSTALL_LIST"
+
+	if [[ $QUERY_ONLY == "no" ]]
+	then
+		echo -n "Install these packages? [Y/n]"
+		read INSTALL_YESNO
+	fi
+else
+	echo "There are no packages to install."
+fi
+
+# check for packages to remove
+if [[ $REMOVAL_NEEDED == true ]]
+then
+	# query user now and apply changes below in one pass
+	echo "Packages to be removed: $TO_REMOVE_LIST"
+
+	if [[ $QUERY_ONLY == "no" ]]
+	then
+		echo -n "Proceed? [Y/n]"
+		read REMOVE_YESNO
+	fi
+else
+	echo "There are no packages to remove."
+fi
+
+if [[ X$INSTALL_YESNO == X"Y" ]] || [[ X$INSTALL_YESNO = X"y" ]]
+then
+	yum -y install $TO_INSTALL_LIST
+fi
+
+if [[ X$REMOVE_YESNO == X"Y" ]] || [[ X$REMOVE_YESNO = X"y" ]]
+then
+	# DO NOT provide -y (automatic confirmation yes) as yum erase may remove
+	# dependencies that we wish to keep?
+	yum erase $TO_REMOVE_LIST
+fi
